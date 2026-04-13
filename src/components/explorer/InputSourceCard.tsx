@@ -39,7 +39,7 @@ export function InputSourceCard() {
             <FileText className="h-4 w-4" />
             Input Source
           </h2>
-          <span className="badge badge-neutral">Original {formatBytes(originalSize)}</span>
+          <span className="badge badge-info badge-outline">Original {formatBytes(originalSize)}</span>
         </header>
 
         <div className="join w-full">
