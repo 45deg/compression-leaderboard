@@ -15,8 +15,8 @@
       "algorithm": "zlib",
       "level": 6,
       "compressedSize": 65,
-      "overheadSize": 0,
-      "payloadSize": 65,
+      "overheadSize": 6,
+      "payloadSize": 59,
       "ratio": 0.07222222222222222,
       "binaryBase64": "eJztykcBwCAQBEArqyBqMJBCOhy9qQcRPO89I24JG5/9w+Yoa5xU8EZlPChJhzD4X1vFQdcCwZkz59m5A0elQxw="
     },
@@ -42,8 +42,8 @@
       "algorithm": "bzip2",
       "level": 6,
       "compressedSize": 124,
-      "overheadSize": 0,
-      "payloadSize": 124,
+      "overheadSize": 14,
+      "payloadSize": 110,
       "ratio": 0.13777777777777778,
       "binaryBase64": "QlpoNjFBWSZTWYYB7swAAG2TgEABBAA////wMAC4CgAGgAAKAAaAAAKVKammjRhNDam2pME5EyT6JknwTUmCak6E9yfZME7EwTsJsTcTuTwTqTYnoT8Jgm4mSdyaE5E1J4JoTqT+JsTQmSZJ0KvJPJP8XckU4UJCGAe7MA=="
     },
@@ -69,8 +69,8 @@
       "algorithm": "lz4",
       "level": 0,
       "compressedSize": 64,
-      "overheadSize": 0,
-      "payloadSize": 64,
+      "overheadSize": 4,
+      "payloadSize": 60,
       "ratio": 0.07111111111111111,
       "binaryBase64": "hAMAAP8eVGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4gLQD///9BYCBkb2cuIA=="
     },
@@ -84,11 +84,11 @@
       "binaryBase64": "MVRoZSBxdWljayBicm93biBmb3gganVtcHMgb3ZlciB0WAMHbGF6eSBkb2cuICAAAAA5sAARAAA="
     },
     {
-      "algorithm": "lzma",
+      "algorithm": "xz",
       "level": 6,
       "compressedSize": 124,
-      "overheadSize": 0,
-      "payloadSize": 124,
+      "overheadSize": 36,
+      "payloadSize": 88,
       "ratio": 0.13777777777777778,
       "binaryBase64": "/Td6WFoAAATm1rRGA8BAhAchARYAAAAAuuQST+ADgwA4XQAqGgiiAyVm8Ut4xaIF/y7m2dIgGq00+OId6EE2+twGabs85BA0Jwnrs2bj7TeY7ZKt1Sc8yBDAAADFR71qcpyTrwABWIQHAAAArHA5+rHEZ/sCAAAAAARZWg=="
     },
@@ -96,8 +96,8 @@
       "algorithm": "snappy",
       "level": 0,
       "compressedSize": 90,
-      "overheadSize": 0,
-      "payloadSize": 90,
+      "overheadSize": 2,
+      "payloadSize": 88,
       "ratio": 0.1,
       "binaryBase64": "hAewVGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4g/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0AWi0A"
     }

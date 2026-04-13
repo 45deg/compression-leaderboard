@@ -1,7 +1,6 @@
 import { Buffer } from 'node:buffer'
 import { readFile } from 'node:fs/promises'
-import { test } from 'node:test'
-import assert from 'node:assert/strict'
+import { describe, expect, test } from 'vitest'
 
 import { getContainerOverheadBytes } from '../src/utils/compression-overhead.ts'
 import initWasm, {
@@ -19,7 +18,7 @@ type AlgorithmId =
   | 'zstdMagicless'
   | 'lz4'
   | 'lzo'
-  | 'lzma'
+  | 'xz'
   | 'snappy'
 
 interface WasmFixtureCase {
@@ -73,45 +72,45 @@ function mapToWasmAlgorithm(algorithm: AlgorithmId): WasmCompressionAlgorithm {
       return WasmCompressionAlgorithm.Lz4
     case 'lzo':
       return WasmCompressionAlgorithm.Lzo
-    case 'lzma':
+    case 'xz':
       return WasmCompressionAlgorithm.Lzma
     case 'snappy':
       return WasmCompressionAlgorithm.Snappy
   }
 }
 
-test('wasm fixture input size matches encoded bytes', () => {
-  const input = new TextEncoder().encode(fixture.inputText)
-  assert.equal(input.length, fixture.inputSize)
-})
+describe('wasm compression fixture', () => {
+  test('fixture input size matches encoded bytes', () => {
+    const input = new TextEncoder().encode(fixture.inputText)
+    expect(input.length).toBe(fixture.inputSize)
+  })
 
-test('wasm compression outputs match fixture including overhead and payload sizes', async () => {
-  await ensureWasmReady()
+  test('wasm outputs match fixture including overhead and payload sizes', async () => {
+    await ensureWasmReady()
 
-  const input = new TextEncoder().encode(fixture.inputText)
+    const input = new TextEncoder().encode(fixture.inputText)
 
-  for (const [algorithm, expected] of fixtureCases) {
-    const wasmAlgorithm = mapToWasmAlgorithm(algorithm)
-    const result = run_compression(wasmAlgorithm, input, expected.level)
-    let binaryOutput = new Uint8Array()
+    for (const [algorithm, expected] of fixtureCases) {
+      const wasmAlgorithm = mapToWasmAlgorithm(algorithm)
+      const result = run_compression(wasmAlgorithm, input, expected.level)
+      let binaryOutput = new Uint8Array()
 
-    try {
-      binaryOutput = new Uint8Array(result.output)
-      const compressedSize = result.compressed_size
-      const computedOverheadSize = getContainerOverheadBytes(algorithm, binaryOutput)
-      const payloadSize = Math.max(0, compressedSize - computedOverheadSize)
+      try {
+        binaryOutput = new Uint8Array(result.output)
+        const compressedSize = result.compressed_size
+        const computedOverheadSize = getContainerOverheadBytes(algorithm, binaryOutput)
+        const payloadSize = Math.max(0, compressedSize - computedOverheadSize)
 
-      assert.equal(compressedSize, expected.compressedSize, `${algorithm} compressed size`)
-      assert.equal(computedOverheadSize, expected.overheadSize, `${algorithm} overhead size`)
-      assert.equal(payloadSize, expected.payloadSize, `${algorithm} payload size`)
-      assert.equal(
-        Buffer.from(binaryOutput).toString('base64'),
-        expected.binaryBase64,
-        `${algorithm} binary fixture payload`,
-      )
-      assert.equal(result.ratio, expected.ratio, `${algorithm} ratio`)
-    } finally {
-      result.free()
+        expect(compressedSize, `${algorithm} compressed size`).toBe(expected.compressedSize)
+        expect(computedOverheadSize, `${algorithm} overhead size`).toBe(expected.overheadSize)
+        expect(payloadSize, `${algorithm} payload size`).toBe(expected.payloadSize)
+        expect(Buffer.from(binaryOutput).toString('base64'), `${algorithm} binary fixture payload`).toBe(
+          expected.binaryBase64,
+        )
+        expect(result.ratio, `${algorithm} ratio`).toBe(expected.ratio)
+      } finally {
+        result.free()
+      }
     }
-  }
+  })
 })

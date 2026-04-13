@@ -40,7 +40,7 @@ export const ALGORITHM_OPTIONS: CompressionAlgorithmOption[] = [
   },
   { algorithm: 'lz4', label: 'lz4', supportsLevel: false, defaultLevel: 0, minLevel: 0, maxLevel: 0, step: 1 },
   { algorithm: 'lzo', label: 'lzo', supportsLevel: false, defaultLevel: 0, minLevel: 0, maxLevel: 0, step: 1 },
-  { algorithm: 'lzma', label: 'xz', supportsLevel: true, defaultLevel: 6, minLevel: 0, maxLevel: 9, step: 1 },
+  { algorithm: 'xz', label: 'xz', supportsLevel: true, defaultLevel: 6, minLevel: 0, maxLevel: 9, step: 1 },
   { algorithm: 'snappy', label: 'snappy', supportsLevel: false, defaultLevel: 0, minLevel: 0, maxLevel: 0, step: 1 },
 ]
 
@@ -101,7 +101,7 @@ export const DEFAULT_PRESET_ENTRIES: PresetEntry[] = [
   {
     id: 'default-xz',
     enabled: true,
-    algorithm: 'lzma',
+    algorithm: 'xz',
     level: 6,
     modifiers: { ...DEFAULT_MODIFIERS },
     source: 'default',

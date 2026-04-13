@@ -10,7 +10,7 @@ export type AlgorithmId =
   | 'zstdMagicless'
   | 'lz4'
   | 'lzo'
-  | 'lzma'
+  | 'xz'
   | 'snappy'
 
 export type EncodingMode = 'none' | 'base64' | 'base85'

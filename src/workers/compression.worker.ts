@@ -45,7 +45,7 @@ function mapAlgorithm(algorithm: AlgorithmId): WasmCompressionAlgorithm {
       return WasmCompressionAlgorithm.Lz4
     case 'lzo':
       return WasmCompressionAlgorithm.Lzo
-    case 'lzma':
+    case 'xz':
       return WasmCompressionAlgorithm.Lzma
     case 'snappy':
       return WasmCompressionAlgorithm.Snappy
