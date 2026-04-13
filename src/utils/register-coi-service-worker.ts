@@ -11,7 +11,7 @@ export function registerCoiServiceWorker(): void {
     return
   }
 
-  navigator.serviceWorker.register('/coi-serviceworker.js').catch((error: unknown) => {
+  navigator.serviceWorker.register(import.meta.env.BASE_URL + '/coi-serviceworker.js').catch((error: unknown) => {
     const detail = error instanceof Error ? error.message : 'Unknown registration error'
     console.error(`Failed to register COI service worker: ${detail}`)
   })

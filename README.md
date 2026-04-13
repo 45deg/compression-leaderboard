@@ -1,10 +1,18 @@
 # Compression Leaderboard (React + Rust/WASM)
 
 Single-page benchmark workbench for comparing compression presets with a two-pane UI:
-- **Left pane**: run/cancel controls, input source, compact preset checklist, inline add form
-- **Right pane**: metric chart + sortable results table + binary/base64 utilities
+- **Left pane**: run/cancel controls, input source, compact preset checklist, inline add form with Base64/Base85 modifiers
+- **Right pane**: metric chart + sortable results table + binary download action
 
 Compression runs execute in a **Web Worker**, while codecs run inside **Rust-compiled WASM**.
+
+## Setup
+
+```bash
+pnpm install
+```
+
+The Rust toolchain (cargo) with `wasm-pack` must also be available locally, because `pnpm dev` and `pnpm build` invoke it automatically.
 
 ## Stack
 
@@ -41,6 +49,7 @@ pnpm build         # build wasm (release) + type-check + bundle
 pnpm build:wasm    # generate wasm pkg in src/wasm/pkg (release)
 pnpm build:wasm:dev
 pnpm lint
+pnpm test
 pnpm preview
 ```
 

@@ -3,6 +3,7 @@ import { useCallback, useMemo, type MouseEvent } from 'react'
 
 import { useCompressionWorkbench } from '../../context/use-compression-workbench'
 import type { CompressionResultRow, ResultSortField } from '../../types/compression'
+import { buildCompressedDownloadFilename } from '../../utils/compression-download'
 import { getAlgorithmOption } from '../../utils/compression-config'
 import { formatBytes, formatDuration, formatRatio, formatThroughput } from '../../utils/formatters'
 
@@ -63,7 +64,7 @@ export function ResultsTableCard() {
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `${row.presetId}.bin`
+      link.download = buildCompressedDownloadFilename(row.presetId, row.algorithm)
       link.click()
       URL.revokeObjectURL(url)
     },
