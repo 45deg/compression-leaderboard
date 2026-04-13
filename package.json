@@ -9,6 +9,7 @@
     "build:wasm": "wasm-pack build rust --target web --out-dir ../src/wasm/pkg --release",
     "build:wasm:dev": "wasm-pack build rust --target web --out-dir ../src/wasm/pkg --dev",
     "lint": "eslint .",
+    "test": "node --experimental-strip-types --test tests/wasm-compression.test.ts",
     "preview": "vite preview"
   },
   "dependencies": {

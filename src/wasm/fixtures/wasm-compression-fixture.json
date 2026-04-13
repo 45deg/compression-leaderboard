@@ -1,0 +1,105 @@
+{
+  "inputText": "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. ",
+  "inputSize": 900,
+  "cases": [
+    {
+      "algorithm": "deflate",
+      "level": 6,
+      "compressedSize": 59,
+      "overheadSize": 0,
+      "payloadSize": 59,
+      "ratio": 0.06555555555555556,
+      "binaryBase64": "7cpHAcAgEARAK6sgajCQQjocvakHETzvPSNuCRuf/cPmKGucVPBGZTwoSYcw+F9bxUHXAsGZM+fZuQM="
+    },
+    {
+      "algorithm": "zlib",
+      "level": 6,
+      "compressedSize": 65,
+      "overheadSize": 0,
+      "payloadSize": 65,
+      "ratio": 0.07222222222222222,
+      "binaryBase64": "eJztykcBwCAQBEArqyBqMJBCOhy9qQcRPO89I24JG5/9w+Yoa5xU8EZlPChJhzD4X1vFQdcCwZkz59m5A0elQxw="
+    },
+    {
+      "algorithm": "gzip",
+      "level": 6,
+      "compressedSize": 77,
+      "overheadSize": 18,
+      "payloadSize": 59,
+      "ratio": 0.08555555555555555,
+      "binaryBase64": "H4sIAAAAAAAA/+3KRwHAIBAEQCurIGowkEI6HL2pBxE87z0jbgkbn/3D5ihrnFTwRmU8KEmHMPhfW8VB1wLBmTPn2bkD5kpmsIQDAAA="
+    },
+    {
+      "algorithm": "brotli",
+      "level": 4,
+      "compressedSize": 52,
+      "overheadSize": 0,
+      "payloadSize": 52,
+      "ratio": 0.057777777777777775,
+      "binaryBase64": "G4MDAETbRqkuJFsyFMVTkWdy8qcpUBWYF7qyWZCDb+GVpyPyoqw2JrhFHxgnYnX/ITAZAA=="
+    },
+    {
+      "algorithm": "bzip2",
+      "level": 6,
+      "compressedSize": 124,
+      "overheadSize": 0,
+      "payloadSize": 124,
+      "ratio": 0.13777777777777778,
+      "binaryBase64": "QlpoNjFBWSZTWYYB7swAAG2TgEABBAA////wMAC4CgAGgAAKAAaAAAKVKammjRhNDam2pME5EyT6JknwTUmCak6E9yfZME7EwTsJsTcTuTwTqTYnoT8Jgm4mSdyaE5E1J4JoTqT+JsTQmSZJ0KvJPJP8XckU4UJCGAe7MA=="
+    },
+    {
+      "algorithm": "zstd",
+      "level": 3,
+      "compressedSize": 63,
+      "overheadSize": 6,
+      "payloadSize": 57,
+      "ratio": 0.07,
+      "binaryBase64": "KLUv/QBYtQEA1AJUaGUgcXVpY2sgYnJvd24gZm94IGp1bXBzIG92ZXIgdGhlIGxhenkgZG9nLiABAKUKK1UG"
+    },
+    {
+      "algorithm": "zstdMagicless",
+      "level": 3,
+      "compressedSize": 59,
+      "overheadSize": 2,
+      "payloadSize": 57,
+      "ratio": 0.06555555555555556,
+      "binaryBase64": "AFi1AQDUAlRoZSBxdWljayBicm93biBmb3gganVtcHMgb3ZlciB0aGUgbGF6eSBkb2cuIAEApQorVQY="
+    },
+    {
+      "algorithm": "lz4",
+      "level": 0,
+      "compressedSize": 64,
+      "overheadSize": 0,
+      "payloadSize": 64,
+      "ratio": 0.07111111111111111,
+      "binaryBase64": "hAMAAP8eVGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4gLQD///9BYCBkb2cuIA=="
+    },
+    {
+      "algorithm": "lzo",
+      "level": 0,
+      "compressedSize": 56,
+      "overheadSize": 0,
+      "payloadSize": 56,
+      "ratio": 0.06222222222222222,
+      "binaryBase64": "MVRoZSBxdWljayBicm93biBmb3gganVtcHMgb3ZlciB0WAMHbGF6eSBkb2cuICAAAAA5sAARAAA="
+    },
+    {
+      "algorithm": "lzma",
+      "level": 6,
+      "compressedSize": 124,
+      "overheadSize": 0,
+      "payloadSize": 124,
+      "ratio": 0.13777777777777778,
+      "binaryBase64": "/Td6WFoAAATm1rRGA8BAhAchARYAAAAAuuQST+ADgwA4XQAqGgiiAyVm8Ut4xaIF/y7m2dIgGq00+OId6EE2+twGabs85BA0Jwnrs2bj7TeY7ZKt1Sc8yBDAAADFR71qcpyTrwABWIQHAAAArHA5+rHEZ/sCAAAAAARZWg=="
+    },
+    {
+      "algorithm": "snappy",
+      "level": 0,
+      "compressedSize": 90,
+      "overheadSize": 0,
+      "payloadSize": 90,
+      "ratio": 0.1,
+      "binaryBase64": "hAewVGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4g/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0A/i0AWi0A"
+    }
+  ]
+}
