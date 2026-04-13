@@ -123,7 +123,7 @@ export function AlgorithmSelectionCard() {
                 <span className="label py-1">
                   <span className="label-text">Algorithm</span>
                 </span>
-                <select className="select select-bordered select-sm" value={draftAlgorithm} onChange={handleDraftAlgorithmChange}>
+                <select className="select select-bordered" value={draftAlgorithm} onChange={handleDraftAlgorithmChange}>
                   {algorithmOptionItems}
                 </select>
               </label>
@@ -147,11 +147,11 @@ export function AlgorithmSelectionCard() {
 
               <div className="space-y-1">
                 <p className="text-sm font-medium">Post</p>
-                <label className="label cursor-pointer justify-start gap-3 py-1">
+                <label className="label cursor-pointer justify-start gap-2 py-1">
                   <input className="checkbox checkbox-sm" type="checkbox" checked={draftBase64} onChange={handleDraftBase64Change} />
                   <span className="label-text">base64</span>
                 </label>
-                <label className="label cursor-pointer justify-start gap-3 py-1">
+                <label className="label cursor-pointer justify-start gap-2 py-1 pl-3">
                   <input className="checkbox checkbox-sm" type="checkbox" checked={draftBase85} onChange={handleDraftBase85Change} />
                   <span className="label-text">base85</span>
                 </label>

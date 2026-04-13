@@ -30,7 +30,7 @@ interface CompressionWorkbenchProviderProps {
 
 export function CompressionWorkbenchProvider({ children }: CompressionWorkbenchProviderProps) {
   const [inputMode, setInputMode] = useState<InputMode>('text')
-  const [textInput, setTextInput] = useState<string>('Enter text or upload a file to benchmark compression strategies.')
+  const [textInput, setTextInput] = useState<string>('Enter text or upload a file to benchmark compression strategies.\n\n---' + '\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'.repeat(3))
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [presetEntries, setPresetEntries] = useState<PresetEntry[]>(() => clonePresetEntries(DEFAULT_PRESET_ENTRIES))
   const [metric, setMetric] = useState<ChartMetric>(DEFAULT_METRIC)

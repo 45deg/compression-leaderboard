@@ -100,7 +100,7 @@ export const DEFAULT_PRESET_ENTRIES: PresetEntry[] = [
   },
   {
     id: 'default-xz',
-    enabled: true,
+    enabled: false,
     algorithm: 'xz',
     level: 6,
     modifiers: { ...DEFAULT_MODIFIERS },
@@ -116,7 +116,7 @@ export const DEFAULT_PRESET_ENTRIES: PresetEntry[] = [
   },
   {
     id: 'default-zstd-3',
-    enabled: false,
+    enabled: true,
     algorithm: 'zstd',
     level: 3,
     modifiers: { ...DEFAULT_MODIFIERS },
