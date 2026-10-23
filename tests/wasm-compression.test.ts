@@ -80,6 +80,29 @@ function mapToWasmAlgorithm(algorithm: AlgorithmId): WasmCompressionAlgorithm {
 }
 
 describe('wasm compression fixture', () => {
+  test.each([0, 1, 4, 11])('Brotli quality %s round-trips through WASM', async (level) => {
+    await ensureWasmReady()
+    const input = new TextEncoder().encode('Brotli round trip. '.repeat(128))
+    const result = run_compression(WasmCompressionAlgorithm.Brotli, input, level)
+    try {
+      expect(result.compressed_size).toBeGreaterThan(0)
+      expect(Number.isFinite(result.decompression_ms)).toBe(true)
+    } finally {
+      result.free()
+    }
+  })
+
+  test.each([0, 1, 5, 65_536])('LZO validates a %s-byte input through WASM', async (size) => {
+    await ensureWasmReady()
+    const result = run_compression(WasmCompressionAlgorithm.Lzo, new Uint8Array(size), 0)
+    try {
+      expect(result.compressed_size).toBeGreaterThan(0)
+      expect(Number.isFinite(result.decompression_ms)).toBe(true)
+    } finally {
+      result.free()
+    }
+  })
+
   test('fixture input size matches encoded bytes', () => {
     const input = new TextEncoder().encode(fixture.inputText)
     expect(input.length).toBe(fixture.inputSize)

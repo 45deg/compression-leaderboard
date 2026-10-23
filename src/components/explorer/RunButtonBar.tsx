@@ -1,10 +1,10 @@
-import { Play } from 'lucide-react'
+import { Play, Square } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 
 import { useCompressionWorkbench } from '../../context/use-compression-workbench'
 
 export function RunButtonBar() {
-  const { runCompression, isRunning, isWorkerReady, originalSize, presetEntries, progress, errorMessage } =
+  const { runCompression, cancelCompression, isRunning, isWorkerReady, originalSize, presetEntries, progress, errorMessage } =
     useCompressionWorkbench()
 
   const enabledCount = useMemo(() => presetEntries.filter((entry) => entry.enabled).length, [presetEntries])
@@ -25,6 +25,12 @@ export function RunButtonBar() {
         <Play className="h-4 w-4" />
         Run
       </button>
+      {isRunning && (
+        <button type="button" className="btn btn-outline w-full" onClick={cancelCompression}>
+          <Square className="h-4 w-4" />
+          Cancel
+        </button>
+      )}
       <div className="text-xs text-base-content/70">
         {isRunning
           ? progress

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { CompressionJob, CompressionResultRow, RunProgress } from '../types/compression'
 import type {
-  WorkerCancelMessage,
   WorkerDoneMessage,
   WorkerErrorMessage,
   WorkerProgressMessage,
@@ -31,13 +30,14 @@ export interface CompressionWorkerController {
 export function useCompressionWorker(): CompressionWorkerController {
   const workerRef = useRef<Worker | null>(null)
   const pendingRequestRef = useRef<PendingRequest | null>(null)
+  const restartWorkerRef = useRef<(() => void) | null>(null)
   const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
-    const worker = new Worker(new URL('../workers/compression.worker.ts', import.meta.url), { type: 'module' })
-    workerRef.current = worker
-
     const onMessage = (event: MessageEvent<WorkerToMainMessage>) => {
+      if (event.currentTarget !== workerRef.current) {
+        return
+      }
       const message = event.data
 
       if (message.type === 'ready') {
@@ -61,28 +61,48 @@ export function useCompressionWorker(): CompressionWorkerController {
         return
       }
 
-      if (message.type === 'cancelled') {
-        pendingRequest.reject(new Error('Compression run cancelled.'))
-        pendingRequestRef.current = null
-        return
-      }
-
       handleErrorMessage(message, pendingRequest.reject)
       pendingRequestRef.current = null
     }
 
-    worker.addEventListener('message', onMessage as EventListener)
+    const onError = (event: ErrorEvent) => {
+      if (event.currentTarget !== workerRef.current) {
+        return
+      }
+      pendingRequestRef.current?.reject(new Error(event.message || 'Compression worker failed.'))
+      pendingRequestRef.current = null
+      workerRef.current?.terminate()
+      workerRef.current = null
+      setIsReady(false)
+    }
+
+    const createWorker = () => {
+      const worker = new Worker(new URL('../workers/compression.worker.ts', import.meta.url), { type: 'module' })
+      worker.addEventListener('message', onMessage as EventListener)
+      worker.addEventListener('error', onError as EventListener)
+      workerRef.current = worker
+    }
+
+    createWorker()
+    restartWorkerRef.current = () => {
+      // WASM runs synchronously, so a queued cancel message cannot interrupt it.
+      workerRef.current?.terminate()
+      pendingRequestRef.current?.reject(new Error('Compression run cancelled.'))
+      pendingRequestRef.current = null
+      workerRef.current = null
+      setIsReady(false)
+      createWorker()
+    }
 
     return () => {
-      worker.removeEventListener('message', onMessage as EventListener)
-
+      restartWorkerRef.current = null
       const pendingRequest = pendingRequestRef.current
       if (pendingRequest) {
         pendingRequest.reject(new Error('Compression worker terminated unexpectedly.'))
         pendingRequestRef.current = null
       }
 
-      worker.terminate()
+      workerRef.current?.terminate()
       workerRef.current = null
     }
   }, [])
@@ -109,32 +129,31 @@ export function useCompressionWorker(): CompressionWorkerController {
           reject,
         }
 
-        worker.postMessage(
-          {
-            type: 'run',
-            requestId,
-            inputBuffer: transferableInput.buffer,
-            jobs,
-          },
-          [transferableInput.buffer],
-        )
+        try {
+          worker.postMessage(
+            {
+              type: 'run',
+              requestId,
+              inputBuffer: transferableInput.buffer,
+              jobs,
+            },
+            [transferableInput.buffer],
+          )
+        } catch (error) {
+          pendingRequestRef.current = null
+          reject(error)
+        }
       })
     },
     [],
   )
 
   const cancelCurrentRun = useCallback(() => {
-    const worker = workerRef.current
-    const pendingRequest = pendingRequestRef.current
-    if (!worker || !pendingRequest) {
+    if (!pendingRequestRef.current) {
       return
     }
 
-    const message: WorkerCancelMessage = {
-      type: 'cancel',
-      requestId: pendingRequest.requestId,
-    }
-    worker.postMessage(message)
+    restartWorkerRef.current?.()
   }, [])
 
   return {

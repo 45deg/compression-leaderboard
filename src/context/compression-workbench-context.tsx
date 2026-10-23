@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import { useCompressionWorker } from '../hooks/useCompressionWorker'
 import type {
@@ -36,6 +36,7 @@ export function CompressionWorkbenchProvider({ children }: CompressionWorkbenchP
   const [metric, setMetric] = useState<ChartMetric>(DEFAULT_METRIC)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isRunning, setIsRunning] = useState(false)
+  const activeRunRef = useRef<{ cancelled: boolean } | null>(null)
   const [progress, setProgress] = useState<RunProgress | null>(null)
   const [rows, setRows] = useState<CompressionResultRow[]>([])
   const [sortField, setSortField] = useState<ResultSortField>('ratio')
@@ -92,6 +93,9 @@ export function CompressionWorkbenchProvider({ children }: CompressionWorkbenchP
   )
 
   const runCompression = useCallback(async () => {
+    if (activeRunRef.current) {
+      return
+    }
     setErrorMessage(null)
 
     if (!isWorkerReady) {
@@ -99,41 +103,48 @@ export function CompressionWorkbenchProvider({ children }: CompressionWorkbenchP
       return
     }
 
-    const input = await getInputBytes(inputMode, textInput, selectedFile)
-    if (input.length === 0) {
-      setErrorMessage('Input is empty. Add text or choose a file before running.')
-      return
-    }
-
-    const jobs = enabledEntries.map((entry) => {
-      const option = getAlgorithmOption(entry.algorithm)
-      const normalizedLevel = option.supportsLevel
-        ? Math.max(option.minLevel, Math.min(option.maxLevel, entry.level))
-        : option.defaultLevel
-
-      return {
-        presetId: entry.id,
-        label: buildPresetNotation(entry.algorithm, normalizedLevel, entry.modifiers),
-        algorithm: entry.algorithm,
-        level: normalizedLevel,
-        modifiers: cloneModifiers(entry.modifiers),
-      }
-    })
-
-    if (jobs.length === 0) {
-      setErrorMessage('Enable at least one preset before running.')
-      return
-    }
-
-    setRows([])
+    const run = { cancelled: false }
+    activeRunRef.current = run
     setIsRunning(true)
-    setProgress({
-      completed: 0,
-      total: jobs.length,
-      currentLabel: 'Starting...',
-    })
+    setProgress(null)
 
     try {
+      const input = await getInputBytes(inputMode, textInput, selectedFile)
+      if (run.cancelled) {
+        return
+      }
+      if (input.length === 0) {
+        setErrorMessage('Input is empty. Add text or choose a file before running.')
+        return
+      }
+
+      const jobs = enabledEntries.map((entry) => {
+        const option = getAlgorithmOption(entry.algorithm)
+        const normalizedLevel = option.supportsLevel
+          ? Math.max(option.minLevel, Math.min(option.maxLevel, entry.level))
+          : option.defaultLevel
+
+        return {
+          presetId: entry.id,
+          label: buildPresetNotation(entry.algorithm, normalizedLevel, entry.modifiers),
+          algorithm: entry.algorithm,
+          level: normalizedLevel,
+          modifiers: cloneModifiers(entry.modifiers),
+        }
+      })
+
+      if (jobs.length === 0) {
+        setErrorMessage('Enable at least one preset before running.')
+        return
+      }
+
+      setRows([])
+      setProgress({
+        completed: 0,
+        total: jobs.length,
+        currentLabel: 'Starting...',
+      })
+
       const responseRows = await runWithWorker({
         input,
         jobs,
@@ -148,15 +159,19 @@ export function CompressionWorkbenchProvider({ children }: CompressionWorkbenchP
       })
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Compression execution failed.'
-      if (!message.toLowerCase().includes('cancelled')) {
+      if (!run.cancelled) {
         setErrorMessage(message)
       }
     } finally {
+      activeRunRef.current = null
       setIsRunning(false)
     }
   }, [enabledEntries, inputMode, isWorkerReady, runWithWorker, selectedFile, textInput])
 
   const cancelCompression = useCallback(() => {
+    if (activeRunRef.current) {
+      activeRunRef.current.cancelled = true
+    }
     cancelCurrentRun()
     setProgress((current) =>
       current

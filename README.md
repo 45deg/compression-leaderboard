@@ -8,11 +8,31 @@ Compression runs execute in a **Web Worker**, while codecs run inside **Rust-com
 
 ## Setup
 
+Use Node.js 24.22.1 (see `.node-version`), or a patched supported release matching
+`package.json`'s `engines.node` range. Older releases are rejected during installation.
+
 ```bash
 pnpm install
 ```
 
-The Rust toolchain (cargo) with `wasm-pack` must also be available locally, because `pnpm dev` and `pnpm build` invoke it automatically.
+The Rust toolchain (cargo) with `wasm-pack` must also be available locally, because
+`pnpm dev` and `pnpm build` invoke it automatically. The build is verified with
+`wasm-pack` 0.15.0. Install or update it with:
+
+```bash
+cargo install wasm-pack --version 0.15.0 --locked
+```
+
+### Brotli security
+
+[CVE-2026-111497](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
+affects the Google Brotli decoder bundled with Node.js. Fixed Node.js releases are
+22.23.4, 24.22.1, and 26.12.1. Node.js 24.22.1 backports the fix, so its reported
+Brotli version can still be 1.2.0.
+
+The browser benchmark uses the separate [Rust Brotli implementation](https://github.com/dropbox/rust-brotli),
+not Node.js's decoder. Its dependency is updated to 8.0.4 for upstream bug fixes.
+`rust/Cargo.lock` records the resolved Rust dependencies for reproducible builds.
 
 ## Stack
 
@@ -52,6 +72,8 @@ pnpm lint
 pnpm test
 pnpm preview
 ```
+
+`pnpm test` builds the WASM package before running tests, including on a fresh checkout.
 
 ## Project layout
 

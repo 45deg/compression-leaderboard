@@ -4,7 +4,6 @@ import initWasm, { CompressionAlgorithm as WasmCompressionAlgorithm, run_compres
 import type { AlgorithmId, CompressionResultRow, EncodingMode } from '../types/compression'
 import type {
   MainToWorkerMessage,
-  WorkerCancelledMessage,
   WorkerDoneMessage,
   WorkerErrorMessage,
   WorkerProgressMessage,
@@ -14,7 +13,6 @@ import { getContainerOverheadBytes } from '../utils/compression-overhead'
 import { bytesToAscii85, bytesToBase64 } from '../utils/encoding'
 
 const workerScope: DedicatedWorkerGlobalScope = self as DedicatedWorkerGlobalScope
-const cancelledRequests = new Set<string>()
 
 let wasmReadyPromise: Promise<void> | null = null
 
@@ -61,11 +59,6 @@ function getThroughput(originalBytes: number, compressionMs: number): number {
   return megabytes / seconds
 }
 
-function postCancelled(requestId: string): void {
-  const message: WorkerCancelledMessage = { type: 'cancelled', requestId }
-  workerScope.postMessage(message)
-}
-
 function postProgress(requestId: string, completed: number, total: number, currentLabel: string): void {
   const message: WorkerProgressMessage = { type: 'progress', requestId, completed, total, currentLabel }
   workerScope.postMessage(message)
@@ -95,12 +88,6 @@ async function executeRun(message: WorkerRunMessage): Promise<void> {
   const results: CompressionResultRow[] = []
 
   for (let index = 0; index < jobs.length; index += 1) {
-    if (cancelledRequests.has(requestId)) {
-      cancelledRequests.delete(requestId)
-      postCancelled(requestId)
-      return
-    }
-
     const job = jobs[index]
     const wasmResult = run_compression(mapAlgorithm(job.algorithm), input, job.level)
     let binaryOutput = new Uint8Array()
@@ -155,12 +142,6 @@ async function executeRun(message: WorkerRunMessage): Promise<void> {
     postProgress(requestId, index + 1, total, job.label)
   }
 
-  if (cancelledRequests.has(requestId)) {
-    cancelledRequests.delete(requestId)
-    postCancelled(requestId)
-    return
-  }
-
   const transferables = results.map((result) => result.binary.buffer)
   const doneMessage: WorkerDoneMessage = { type: 'done', requestId, results }
   workerScope.postMessage(doneMessage, transferables)
@@ -168,11 +149,6 @@ async function executeRun(message: WorkerRunMessage): Promise<void> {
 
 workerScope.onmessage = (event: MessageEvent<MainToWorkerMessage>) => {
   const message = event.data
-
-  if (message.type === 'cancel') {
-    cancelledRequests.add(message.requestId)
-    return
-  }
 
   executeRun(message).catch((error: unknown) => {
     const detail = error instanceof Error ? error.message : 'Compression worker failed.'

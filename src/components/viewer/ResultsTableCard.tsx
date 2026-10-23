@@ -110,7 +110,7 @@ export function ResultsTableCard() {
         <header className="flex items-center justify-between">
           <h2 className="card-title text-base">Data Grid</h2>
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <span className="badge badge-neutral">Input Size: {formatBytes(originalSize)}</span>
+            <span className="badge badge-neutral">Input Size: {formatBytes(results[0]?.originalSize ?? originalSize)}</span>
             <span className="badge badge-outline">{results.length} rows</span>
           </div>
         </header>

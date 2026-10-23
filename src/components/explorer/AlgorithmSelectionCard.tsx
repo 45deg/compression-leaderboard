@@ -54,10 +54,16 @@ export function AlgorithmSelectionCard() {
 
   const handleDraftBase64Change = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setDraftBase64(event.target.checked)
+    if (event.target.checked) {
+      setDraftBase85(false)
+    }
   }, [])
 
   const handleDraftBase85Change = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setDraftBase85(event.target.checked)
+    if (event.target.checked) {
+      setDraftBase64(false)
+    }
   }, [])
 
   const handleAddPreset = useCallback(() => {

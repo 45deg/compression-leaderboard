@@ -82,22 +82,15 @@ pub fn run_compression(
     let output = compress(algorithm, input, level).map_err(|err| JsValue::from_str(&err))?;
     let compression_ms = now_ms() - start;
 
-    let (decompression_ms, restored_for_check) = if matches!(algorithm, CompressionAlgorithm::Lzo) {
-        (0.0, None)
-    } else {
-        let decompress_start = now_ms();
-        let restored =
-            decompress(algorithm, &output, input.len()).map_err(|err| JsValue::from_str(&err))?;
-        let decompression_ms = now_ms() - decompress_start;
-        (decompression_ms, Some(restored))
-    };
+    let decompress_start = now_ms();
+    let restored =
+        decompress(algorithm, &output, input.len()).map_err(|err| JsValue::from_str(&err))?;
+    let decompression_ms = now_ms() - decompress_start;
 
-    if let Some(restored) = restored_for_check {
-        if restored != input {
-            return Err(JsValue::from_str(
-                "Decompression integrity check failed for selected algorithm",
-            ));
-        }
+    if restored != input {
+        return Err(JsValue::from_str(
+            "Decompression integrity check failed for selected algorithm",
+        ));
     }
 
     let ratio = if input.is_empty() {
@@ -514,6 +507,10 @@ fn decompress_lz4(input: &[u8]) -> Result<Vec<u8>, String> {
 }
 
 fn compress_lzo(input: &[u8]) -> Result<Vec<u8>, String> {
+    if input.is_empty() {
+        // lzokay-native emits no bytes for empty input; LZO requires an end marker.
+        return Ok(vec![0x11, 0x00, 0x00]);
+    }
     lzokay_native::compress(input).map_err(|err| format!("LZO compression failed: {err}"))
 }
 
@@ -560,4 +557,28 @@ fn to_c_uint(value: usize, context: &str) -> Result<c_uint, String> {
         return Err(String::from(context));
     }
     Ok(value as c_uint)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn brotli_round_trips_at_all_quality_levels() {
+        let input = b"Brotli round trip: repeated text. ".repeat(128);
+        for quality in 0..=11 {
+            let compressed = compress_brotli(&input, quality).unwrap();
+            assert_eq!(decompress_brotli(&compressed).unwrap(), input);
+        }
+    }
+
+    #[test]
+    fn lzo_round_trips_empty_short_and_repeated_inputs() {
+        for input in [vec![], vec![0], b"hello".to_vec(), vec![0; 65_536]] {
+            let compressed = compress_lzo(&input).unwrap();
+            let restored = decompress_lzo(&compressed, input.len())
+                .unwrap_or_else(|error| panic!("{}-byte input ({compressed:?}): {error}", input.len()));
+            assert_eq!(restored, input);
+        }
+    }
 }

@@ -7,12 +7,7 @@ export interface WorkerRunMessage {
   jobs: CompressionJob[]
 }
 
-export interface WorkerCancelMessage {
-  type: 'cancel'
-  requestId: string
-}
-
-export type MainToWorkerMessage = WorkerRunMessage | WorkerCancelMessage
+export type MainToWorkerMessage = WorkerRunMessage
 
 export interface WorkerReadyMessage {
   type: 'ready'
@@ -32,11 +27,6 @@ export interface WorkerDoneMessage {
   results: CompressionResultRow[]
 }
 
-export interface WorkerCancelledMessage {
-  type: 'cancelled'
-  requestId: string
-}
-
 export interface WorkerErrorMessage {
   type: 'error'
   requestId: string
@@ -47,5 +37,4 @@ export type WorkerToMainMessage =
   | WorkerReadyMessage
   | WorkerProgressMessage
   | WorkerDoneMessage
-  | WorkerCancelledMessage
   | WorkerErrorMessage

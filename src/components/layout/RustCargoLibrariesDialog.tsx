@@ -11,7 +11,7 @@ type RustCargoLibrary = {
 const RUST_CARGO_LIBRARIES: RustCargoLibrary[] = [
   {
     name: 'brotli',
-    version: '8.0.2',
+    version: '8.0.4',
     description: 'Brotli compression and decompression.',
     docsUrl: 'https://docs.rs/brotli',
   },

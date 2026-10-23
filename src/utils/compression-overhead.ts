@@ -42,7 +42,8 @@ function getZlibOverheadBytes(binary: Uint8Array): number {
   }
 
   const hasPresetDictionary = (flg & 0x20) !== 0
-  return hasPresetDictionary ? 10 : 6
+  const overhead = hasPresetDictionary ? 10 : 6
+  return binary.length >= overhead ? overhead : 0
 }
 
 function getZstdOverheadBytes(binary: Uint8Array, withMagicNumber: boolean): number {
@@ -209,7 +210,7 @@ function getXzOverheadBytes(binary: Uint8Array): number {
     (binary[binary.length - 7] << 8) |
     (binary[binary.length - 6] << 16) |
     (binary[binary.length - 5] << 24)
-  const indexSize = (backwardSize + 1) * 4
+  const indexSize = ((backwardSize >>> 0) + 1) * 4
   const overhead = 24 + indexSize
 
   if (overhead > binary.length) {
